@@ -1,0 +1,5 @@
+- name: Generate configuration files
+  ansible.builtin.template:
+    src: router.j2
+    dest: "/home/azeez/ansible_eveng_lab/config/{{ inventory_hostname }}.cfg"
+  # loop: "{{routers}}"

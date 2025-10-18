@@ -1,0 +1,66 @@
+! Command: show running-config
+! device: Spine (vEOS-lab, EOS-4.33.1F)
+!
+! boot system flash:/vEOS-lab.swi
+!
+no aaa root
+!
+username admin privilege 15 role network-admin secret sha512 $6$uXeFf21FQyLTGgd/$j.nkLXYlEyotDzQshKEn8ztbs8MiPOnICVKRALM/4pUQvWRsjpeXWMbuv0YUY9H/jf4079PTMpZufff8dlodp.
+!
+management api http-commands
+   no shutdown
+!
+no service interface inactive port-id allocation disabled
+!
+transceiver qsfp default-mode 4x10G
+!
+service routing protocols model multi-agent
+!
+hostname Spine
+!
+spanning-tree mode mstp
+!
+system l1
+   unsupported speed action error
+   unsupported error-correction action error
+!
+vlan 10
+   name VLAN10
+!
+vlan 20
+   name VLAN20
+!
+interface Ethernet1
+!
+interface Ethernet2
+!
+interface Ethernet3
+!
+interface Ethernet4
+!
+interface Ethernet5
+!
+interface Ethernet6
+!
+interface Ethernet7
+!
+interface Ethernet8
+!
+interface Management1
+   ip address 192.168.91.11/24
+!
+ip routing
+!
+router bgp 65000
+   router-id 11.11.11.11
+   neighbor 192.168.91.101 remote-as 65001
+   neighbor 192.168.91.102 remote-as 65002
+!
+router multicast
+   ipv4
+      software-forwarding kernel
+   !
+   ipv6
+      software-forwarding kernel
+!
+end

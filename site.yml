@@ -1,0 +1,6 @@
+---
+- name: Generate Router configuration files
+  hosts: routers
+  gather_facts: no
+  roles:
+    - Router

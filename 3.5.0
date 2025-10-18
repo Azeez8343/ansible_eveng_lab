@@ -1,0 +1,8 @@
+Starting galaxy collection install process
+Process install dependency map
+Starting collection install process
+Downloading https://galaxy.ansible.com/api/v3/plugin/ansible/content/published/collections/artifacts/arista-eos-12.0.0.tar.gz to /home/azeez/.ansible/tmp/ansible-local-72186v3_vqplc/tmpkfr13a43/arista-eos-12.0.0-212q0a58
+Installing 'arista.eos:12.0.0' to '/home/azeez/.ansible/collections/ansible_collections/arista/eos'
+arista.eos:12.0.0 was installed successfully
+'ansible.netcommon:8.1.0' is already installed, skipping.
+'ansible.utils:6.0.0' is already installed, skipping.

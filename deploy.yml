@@ -1,0 +1,70 @@
+---
+- name: Deploy router configurations to Arista devices
+  hosts: routers
+  gather_facts: no
+  vars:
+    backup_dir: "./backups"
+    timestamp: "{{ lookup('pipe','date +%Y-%m-%d_%H-%M-%S') }}"
+
+  pre_tasks:
+    - name: Ensure backup directory exists on localhost
+      file:
+        path: "{{ backup_dir }}"
+        state: directory
+        mode: '0755'
+      delegate_to: localhost
+
+    - name: Backup running-config from device
+      arista.eos.eos_command:
+        commands:
+          - show running-config
+      register: config_output
+
+    - name: Save running-config to file with timestamp
+      copy:
+        content: "{{ config_output.stdout[0] }}"
+        dest: "{{ backup_dir }}/{{ inventory_hostname }}_backup_{{ timestamp }}.cfg"
+      delegate_to: localhost
+
+  tasks:
+    - name: Push generated router configuration
+      arista.eos.eos_config:
+        src: "/home/azeez/ansible_eveng_lab/config/{{ inventory_hostname }}.cfg"
+        replace: config
+        save_when: modified
+
+    - name: Enabling routing
+      arista.eos.eos_config:
+        lines:
+          - ip routing
+
+    - name: Parsing show commands
+      arista.eos.eos_command:
+        commands:
+          - show version
+          - show ip interface brief
+          - show interfaces status
+          - show ip bgp summary
+      register: eos_output
+
+    - name: Save outputs to local text file
+      delegate_to: localhost
+      run_once: false
+      copy:
+        content: |
+          ============================================================
+          Host: {{ inventory_hostname }}
+          ============================================================
+
+          >>> show version
+          {{ eos_output.stdout[0] }}
+
+          >>> show ip interface brief
+          {{ eos_output.stdout[1] }}
+
+          >>> show interfaces status
+          {{ eos_output.stdout[2] }}
+          
+          >>> show ip bgp summary
+          {{ eos_output.stdout[3] }}
+        dest: "./outputs/{{ inventory_hostname }}_eos_output.txt"

@@ -1,0 +1,34 @@
+- name: Backup with recovery
+  hosts: all
+  gather_facts: no
+  connection: network_cli
+  become: yes
+  become_method: enable
+
+  tasks:
+    - name: Ensure local backup directory exists
+      delegate_to: localhost
+      file:
+        path: ./backups
+        state: directory
+        mode: '0755'
+
+    - block:
+        - name: Collect running config
+          arista.eos.eos_command:
+            commands: ["show running-config"]
+          register: run_cfg
+
+        - name: Save config locally
+          delegate_to: localhost
+          copy:
+            dest: "./backups/{{ inventory_hostname }}_config.txt"
+            content: "{{ run_cfg.stdout[0] }}"
+
+      rescue:
+        - name: Log failure
+          delegate_to: localhost
+          lineinfile:
+            path: ./backup_errors.txt
+            line: "{{ inventory_hostname }} - Backup failed ({{ lookup('pipe','date +%Y-%m-%d_%H:%M:%S') }})"
+            create: yes

@@ -1,0 +1,96 @@
+- name: Configure Arista EOS Lab
+  hosts: all
+  gather_facts: no
+  connection: network_cli
+  become: yes
+  become_method: enable
+
+  vars:
+    vlans:
+      - id: 10
+        name: "VLAN10"
+      - id: 20
+        name: "VLAN20"
+
+    interfaces:
+      leaf01:
+        - name: "Ethernet2"
+          vlan: 10
+      leaf02:
+        - name: "Ethernet2"
+          vlan: 20
+      spine1: []
+
+    management_interfaces:
+      leaf01:
+        - name: "Management1"
+          ipv4:
+            - "192.168.91.101/24"
+      leaf02:
+        - name: "Management1"
+          ipv4:
+            - "192.168.91.102/24"
+      spine1:
+        - name: "Management1"
+          ipv4:
+            - "192.168.91.11/24"
+
+    bgp_peers:
+      spine1:
+        asn: 65000
+        router_id: "11.11.11.11"
+        neighbors:
+          - neighbor_address: "192.168.91.101"
+            remote_as: 65001
+          - neighbor_address: "192.168.91.102"
+            remote_as: 65002
+      leaf01:
+        asn: 65001
+        router_id: "101.101.101.101"
+        neighbors:
+          - neighbor_address: "192.168.91.11"
+            remote_as: 65000
+      leaf02:
+        asn: 65002
+        router_id: "102.102.102.102"
+        neighbors:
+          - neighbor_address: "192.168.91.11"
+            remote_as: 65000
+
+  tasks:
+
+    - name: Configure VLANs
+      arista.eos.eos_vlans:
+        config:
+          - vlan_id: "{{ item.id }}"
+            name: "{{ item.name }}"
+        state: merged
+      loop: "{{ vlans }}"
+
+    - name: Configure Access Interfaces
+      arista.eos.eos_l2_interfaces:
+        config:
+          - name: "{{ item.name }}"
+            mode: access
+            access:
+              vlan: "{{ item.vlan }}"
+        state: merged
+      loop: "{{ interfaces[inventory_hostname] | default([]) }}"
+
+    - name: Configure Management Interfaces (Layer 3)
+      arista.eos.eos_l3_interfaces:
+          config:
+              - name: "{{ item.name }}"
+                ipv4:
+                  - address: "{{ item.ipv4[0] }}"
+          state: merged
+      loop: "{{ management_interfaces[inventory_hostname] | default([]) }}"
+
+    - name: Enable BGP in default VRF and configure neighbors
+      arista.eos.eos_bgp_global:
+        state: merged
+        config:
+          as_number: "{{ bgp_peers[inventory_hostname].asn }}"
+          router_id: "{{ bgp_peers[inventory_hostname].router_id }}"
+          neighbors: "{{ bgp_peers[inventory_hostname].neighbors }}"
+

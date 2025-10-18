@@ -1,0 +1,74 @@
+- name: Fetching Arista EOS Lab information
+  hosts: all
+  gather_facts: no
+  connection: network_cli
+  become: yes
+  become_method: enable
+
+  # tasks:
+  #   - name: run show version on remote devices
+  #     arista.eos.eos_command:
+  #       commands: show version
+  #     register: version_output
+
+  #   - name: Display Version Info
+  #     debug:
+  #       var: version_output.stdout[0]
+
+
+  # tasks:
+  #   - name: Run 'show version'
+  #     arista.eos.eos_command:
+  #       commands: "show version | json "
+  #     register: version_json
+
+  #   - name: Display Version Info
+  #     debug:
+  #        msg: "Switch {{ inventory_hostname }} is running EOS {{ version_json.stdout[0].version }}"
+
+  #   - name: Save version info to CSV
+  #     delegate_to: localhost
+  #     run_once: false
+  #     lineinfile:
+  #           path: ./arista_versions.txt
+  #           line: "{{ inventory_hostname }},{{ version_json.stdout[0].version }}"
+  #           create: yes
+
+  tasks:
+
+    - name: for idempotency, use full-form commands
+      arista.eos.eos_config:
+        lines:
+          - ip routing
+        
+    - name: Run multiple show commands
+      arista.eos.eos_command:
+        commands:
+          - show version
+          - show ip interface brief
+          - show interfaces status
+          - show ip bgp summary
+      register: eos_output
+
+    - name: Save outputs to local text file
+      delegate_to: localhost
+      run_once: false
+      copy:
+        content: |
+          ============================================================
+          Host: {{ inventory_hostname }}
+          ============================================================
+
+          >>> show version
+          {{ eos_output.stdout[0] }}
+
+          >>> show ip interface brief
+          {{ eos_output.stdout[1] }}
+
+          >>> show interfaces status
+          {{ eos_output.stdout[2] }}
+          
+          >>> show ip bgp summary
+          {{ eos_output.stdout[3] }}
+        dest: "./outputs/{{ inventory_hostname }}_eos_output.txt"
+    

@@ -1,0 +1,69 @@
+! ============================================================
+! Hostname: {{ inventory_hostname }}
+! Generated on: {{ lookup('pipe','date +%Y-%m-%d_%H:%M:%S') }}
+! ============================================================
+
+hostname {{ inventory_hostname }}
+!
+
+! ----------------------------
+! User Configuration
+! ----------------------------
+username admin role network-admin secret Eveng138343
+!
+
+! ----------------------------
+! Interface Configuration
+! ----------------------------
+{% if inventory_hostname == 'leaf01' %}
+{% set base_vlan = 10 %}
+{% set int_count = 10 %}
+{% elif inventory_hostname == 'leaf02' %}
+{% set base_vlan = 20 %}
+{% set int_count = 10 %}
+{% else %}
+{% set base_vlan = 30 %}
+{% set int_count = 10 %}
+{% endif %}
+
+{% for i in range(1, int_count + 1) %}
+interface Ethernet{{ i }}
+   description Uplink-{{ i }}
+   switchport access vlan {{ base_vlan + i }}
+   switchport mode access
+   no shutdown
+!
+{% endfor %}
+
+! ----------------------------
+! Management Interface
+! ----------------------------
+{% if management_interfaces[inventory_hostname] is defined %}
+{% for mgmt in management_interfaces[inventory_hostname] %}
+interface {{ mgmt.name }}
+   ip address {{ mgmt.ipv4[0] }}
+   no shutdown
+!
+{% endfor %}
+{% endif %}
+
+! ----------------------------
+! BGP Configuration
+! ----------------------------
+{% if bgp_peers[inventory_hostname] is defined %}
+router bgp {{ bgp_peers[inventory_hostname].asn }}
+   router-id {{ bgp_peers[inventory_hostname].router_id }}
+{% for nbr in bgp_peers[inventory_hostname].neighbors %}
+   neighbor {{ nbr.neighbor_address }} remote-as {{ nbr.remote_as }}
+{% endfor %}
+!
+{% endif %}
+
+! ----------------------------
+! Management SSH
+! ----------------------------
+management ssh
+   no shutdown
+!
+
+! End of configuration
