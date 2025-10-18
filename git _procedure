@@ -1,0 +1,45 @@
+Local Machine
++-----------------------------+
+|  Edit Ansible files         |
+|  (playbooks, templates)     |
++-------------+---------------+
+              |
+              v
++-----------------------------+
+|  Stage changes              |
+|  git add <files>            |
++-------------+---------------+
+              |
+              v
++-----------------------------+
+|  Commit changes             |
+|  git commit -m "message"    |
++-------------+---------------+
+              |
+              v
++-----------------------------+
+|  Push branch to remote      |
+|  git push origin <branch>   |
++-------------+---------------+
+              |
+              v
+Remote Repository (GitHub)
++-----------------------------+
+|  Optional Pull Request (PR) |
+|  Code review & approval     |
++-------------+---------------+
+              |
+              v
++-----------------------------+
+|  Merge branch into main      |
+|  git checkout main           |
+|  git merge <branch>          |
+|  git push origin main        |
++-----------------------------+
+              |
+              v
+Local Production/Other Team
++-----------------------------+
+|  Pull latest main branch     |
+|  git pull origin main        |
++-----------------------------+
