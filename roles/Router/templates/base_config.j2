@@ -1,0 +1,19 @@
+! ============================================================
+! Hostname: {{ inventory_hostname }}
+! Generated on: {{ lookup('pipe', 'date +%Y-%m-%d_%H:%M:%S') }}
+! ============================================================
+
+hostname {{ inventory_hostname }}
+username admin secret {{ admin_password }}
+!
+! ----------------------------
+! User Configuration
+! ----------------------------
+username admin role network-admin secret Eveng138343
+!
+! ----------------------------
+! Ip routing Configuration
+! ----------------------------
+!
+ip routing
+!

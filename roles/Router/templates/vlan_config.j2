@@ -1,0 +1,19 @@
+! ----------------------------
+! vlan configuration
+!----------------------------
+{% if inventory_hostname == 'leaf01' %}
+{% set base_vlan = 10 %}
+{% set vlan_count = 10 %}
+{% elif inventory_hostname == 'leaf02' %}
+{% set base_vlan = 20 %}
+{% set vlan_count = 10 %}
+{% else %}
+{% set base_vlan = 30 %}
+{% set vlan_count = 10 %}
+{% endif %}
+
+{% for i in range(1, vlan_count + 1) %}
+vlan {{ base_vlan + i }}
+   name VLAN{{ base_vlan + i }}
+!{% endfor %}
+!           
