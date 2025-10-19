@@ -1,15 +1,14 @@
 ! ----------------------------
-! Management Interface
+! Management Interfaces
 ! ----------------------------
-{% if management_interfaces[inventory_hostname] is defined %}
-{% for mgmt in management_interfaces[inventory_hostname] %}
+{% if management_interfaces[inventory_hostname] is defined -%}
+{% for mgmt in management_interfaces[inventory_hostname] -%}
 interface {{ mgmt.name }}
    ip address {{ mgmt.ipv4[0] }}
    no shutdown
 !
-{% endfor %}
-{% endif %}
-
+{% endfor -%}
+{% endif -%}
 
 ! ----------------------------
 ! Management SSH
@@ -17,4 +16,3 @@ interface {{ mgmt.name }}
 management ssh
    no shutdown
 !
-! End of Management Configuration

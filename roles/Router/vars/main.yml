@@ -70,3 +70,6 @@ bgp_peers:
     neighbors:
       - neighbor_address: "192.168.91.11"
         remote_as: 65000
+# admin_password: "Eveng138343"
+ntp_server: "8.8.8.8"
+admin_password: "Eveng138343"
