@@ -2,8 +2,12 @@
 - name: Deploy router configurations to Arista devices
   hosts: routers
   gather_facts: no
+  connection: network_cli
+  vars_files:
+    - "/home/azeez/ansible_eveng_lab/group_vars/all.yml"
   vars:
-    backup_dir: "./backups"
+    ansible_network_os: arista.eos.eos
+    backup_dir: "/home/azeez/ansible_eveng_lab/backups"
     timestamp: "{{ lookup('pipe','date +%Y-%m-%d_%H-%M-%S') }}"
 
   pre_tasks:
@@ -33,10 +37,10 @@
         replace: config
         save_when: modified
 
-    - name: Enabling routing
-      arista.eos.eos_config:
-        lines:
-          - ip routing
+    # - name: Enabling routing
+    #   arista.eos.eos_config:
+    #     lines:
+    #       - ip routing
 
     - name: Parsing show commands
       arista.eos.eos_command:

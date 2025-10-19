@@ -1,0 +1,15 @@
+! ----------------------------
+! Hostname
+! ----------------------------
+hostname {{ inventory_hostname }}
+
+! ----------------------------
+! User Configuration
+! ----------------------------
+username admin role network-admin secret {{ admin_password }}
+
+! ----------------------------
+! IP Routing Configuration
+! ----------------------------
+ip routing
+!

@@ -1,0 +1,12 @@
+! ----------------------------
+! BGP Configuration
+! ----------------------------
+{% if bgp_peers[inventory_hostname] is defined -%}
+router bgp {{ bgp_peers[inventory_hostname].asn }}
+   router-id {{ bgp_peers[inventory_hostname].router_id }}
+{% for nbr in bgp_peers[inventory_hostname].neighbors -%}
+   neighbor {{ nbr.neighbor_address }} remote-as {{ nbr.remote_as }}
+{% endfor -%}
+!
+{% endif -%}
+! End of BGP Configuration
