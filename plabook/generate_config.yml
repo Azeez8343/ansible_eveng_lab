@@ -2,6 +2,6 @@
 - name: Generate Router configuration files
   hosts: routers
   connection: local
-  gather_facts: no
+  gather_facts: false
   roles:
     - Router
