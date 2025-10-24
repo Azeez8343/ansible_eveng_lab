@@ -25,7 +25,7 @@ jobs:
           pip install ansible ansible-lint
 
       - name: Lint playbooks
-        run: ansible-lint ansible/playbooks/
+        run: ansible-lint ansible_eveng_lab/playbook/
 
       - name: Dry run validation
-        run: ansible-playbook ansible/playbooks/deploy.yml --check -i ansible/inventory.yml
+        run: ansible-playbook ansible/playbooks/deploy.yml --check -i ansible_eveng_lab/inventory/host.yml
