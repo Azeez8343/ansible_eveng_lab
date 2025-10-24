@@ -1,0 +1,5 @@
+interface vlan {{ vlan_id }}
+ description SVI for VLAN {{ vlan_name }}
+ ip address {{ svi_ip }} {{ svi_subnet }}
+ no shutdown
+ loop {{ vlan_id }}
